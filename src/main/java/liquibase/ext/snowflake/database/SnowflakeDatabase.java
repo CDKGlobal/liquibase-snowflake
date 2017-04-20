@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,17 +28,17 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     public static final String PRODUCT_NAME = "Snowflake Database";
 
-    private Set<String> systemTablesAndViews = new HashSet<String>();
+    private Set<String> systemTables = new HashSet<String>();
+    private Set<String> systemViews = new HashSet<String>();
 
     private static Pattern INITIAL_COMMENT_PATTERN = Pattern.compile("^/\\*.*?\\*/");
     private static Pattern CREATE_PROJECTION_AS_PATTERN = Pattern.compile("(?im)^\\s*(CREATE|ALTER)\\s+?PROJECTION\\s+?((\\S+?)|(\\[.*\\])|(\\\".*\\\"))\\s+?AS\\s*?", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     private static Pattern CREATE_VIEW_AS_PATTERN = Pattern.compile("^CREATE\\s+.*?VIEW\\s+.*?AS\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
-
     private Set<String> reservedWords = new HashSet<String>();
 
     public SnowflakeDatabase() {
-        super.setCurrentDateTimeFunction("current_timestamp()");
+        super.setCurrentDateTimeFunction("current_timestamp");
         super.unmodifiableDataTypes.addAll(Arrays.asList("integer", "bool", "boolean", "int4", "int8", "float4", "float8", "numeric", "bigserial", "serial", "bytea", "timestamptz"));
         super.unquotedObjectsAreUppercased = false;
     }
@@ -54,12 +55,17 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     @Override
     public Integer getDefaultPort() {
-        return 5433;
+        return null;
+    }
+
+    @Override
+    public Set<String> getSystemTables() {
+        return systemTables;
     }
 
     @Override
     public Set<String> getSystemViews() {
-        return systemTablesAndViews;
+        return systemViews;
     }
 
     @Override
@@ -79,14 +85,13 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        System.out.println("checking for vertica");
         return PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
     }
 
     @Override
     public String getDefaultDriver(String url) {
-        if (url.startsWith("jdbc:vertica:")) {
-            return "com.vertica.jdbc.Driver";
+        if (url.startsWith("jdbc:snowflake:")) {
+            return "net.snowflake.client.jdbc.SnowflakeDriver";
         }
         return null;
     }
@@ -103,7 +108,7 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean supportsSequences() {
-        return false;
+        return true;
     }
 
     @Override
@@ -116,37 +121,8 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
         return super.getDatabaseChangeLogLockTableName().toUpperCase();
     }
 
-
-//    public void dropDatabaseObjects(String schema) throws DatabaseException {
-//        try {
-//            if (schema == null) {
-//                schema = getConnectionUsername();
-//            }
-//            new Executor(this).execute(new RawSqlStatement("DROP OWNED BY " + schema));
-//
-//            getConnection().commit();
-//
-//            changeLogTableExists = false;
-//            changeLogLockTableExists = false;
-//            changeLogCreateAttempted = false;
-//            changeLogLockCreateAttempted = false;
-//
-//        } catch (SQLException e) {
-//            throw new DatabaseException(e);
-//        }
-//    }
-
-
     @Override
     public boolean isSystemObject(DatabaseObject example) {
-        if (example instanceof Table) {
-            if (example.getSchema() != null) {
-                if ("V_MONITOR".equals(example.getSchema().getName())
-                        || "V_CATALOG".equals(example.getSchema().getName())) {
-                    return true;
-                }
-            }
-        }
         return super.isSystemObject(example);
     }
 
@@ -158,9 +134,9 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
     @Override
     public String getAutoIncrementClause(BigInteger startWith, BigInteger incrementBy) {
         if (startWith != null && incrementBy != null) {
-            return " IDENTITY(" + startWith + "," + incrementBy + ") ";
+            return " AUTOINCREMENT(" + startWith + "," + incrementBy + ") ";
         }
-        return " AUTO_INCREMENT ";
+        return " AUTOINCREMENT ";
     }
 
     @Override
@@ -183,10 +159,11 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
         return true;
     }
 
+    /*
     @Override
     public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
         if (hasMixedCase(objectName)) {
-            return "\"" + objectName + "\"";
+            return this.quotingStartCharacter + objectName + this.quotingEndCharacter;
         } else {
             return super.escapeObjectName(objectName, objectType);
         }
@@ -229,65 +206,27 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
         return new CatalogAndSchema(null, schemaName);
     }
 
-    /*
-    * Check if given string has case problems according to postgresql documentation.
-    * If there are at least one characters with upper case while all other are in lower case (or vice versa) this string should be escaped.
-    *
-    * Note: This may make postgres support more case sensitive than normally is, but needs to be left in for backwards compatibility.
-    * Method is public so a subclass extension can override it to always return false.
-    */
     protected boolean hasMixedCase(String tableName) {
         if (tableName == null) {
             return false;
         }
         return StringUtils.hasUpperCase(tableName) && StringUtils.hasLowerCase(tableName);
     }
+    */
 
     @Override
     public boolean supportsRestrictForeignKeys() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public void addReservedWords(Collection<String> words) {
+        reservedWords.addAll(words);
     }
 
     @Override
     public boolean isReservedWord(String tableName) {
         return reservedWords.contains(tableName.toUpperCase());
-    }
-
-    /*
-     * Get the current search paths
-     */
-    private List<String> getSearchPaths() {
-        List<String> searchPaths = null;
-
-        try {
-            DatabaseConnection con = getConnection();
-
-            if (con != null) {
-                String searchPathResult = (String) ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("SHOW search_path"), String.class);
-
-                if (searchPathResult != null) {
-                    String dirtySearchPaths[] = searchPathResult.split("\\,");
-                    searchPaths = new ArrayList<String>();
-                    for (String searchPath : dirtySearchPaths) {
-                        searchPath = searchPath.trim();
-
-                        // Ensure there is consistency ..
-                        if (searchPath.equals("\"$user\"")) {
-                            searchPath = "$user";
-                        }
-
-                        searchPaths.add(searchPath);
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            // TODO: Something?
-            e.printStackTrace();
-            LogFactory.getLogger().severe("Failed to get default catalog name from vertica", e);
-        }
-
-        return searchPaths;
     }
 
     @Override
@@ -297,10 +236,9 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
             return null;
         }
         try {
-            ResultSet resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT CURRENT_SCHEMA");
+            ResultSet resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT CURRENT_SCHEMA()");
             resultSet.next();
             String schema = resultSet.getString(1);
-            System.out.println("schema_name: " + schema);
             return schema;
         } catch (Exception e) {
             LogFactory.getLogger().info("Error getting default schema", e);
@@ -328,57 +266,6 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
             LogFactory.getLogger().info("Error got exception when running: " + query, e);
         }
         return null;
-    }
-
-    private boolean catalogExists(String catalogName) throws DatabaseException {
-        return catalogName != null && runExistsQuery(
-                "select count(*) from information_schema.schemata where catalog_name='" + catalogName + "'");
-    }
-
-    private boolean schemaExists(String schemaName) throws DatabaseException {
-        return schemaName != null && runExistsQuery("select count(*) from information_schema.schemata where schema_name='" + schemaName + "'");
-    }
-
-    private boolean runExistsQuery(String query) throws DatabaseException {
-        Long count = ExecutorService.getInstance().getExecutor(this).queryForLong(new RawSqlStatement(query));
-
-        return count != null && count > 0;
-    }
-
-    public String getProjectionDefinition(CatalogAndSchema schema, String projectionName) throws DatabaseException {
-        schema = correctSchema(schema);
-        List<String> defLines = (List<String>) ExecutorService.getInstance().getExecutor(this).queryForList(new GetProjectionDefinitionStatement(schema.getCatalogName(), schema.getSchemaName(), projectionName), String.class);
-        StringBuilder sb = new StringBuilder();
-        for (String defLine : defLines) {
-            sb.append(defLine);
-        }
-        String definition = sb.toString();
-
-        String finalDef = definition.replaceAll("\r\n", "\n");
-        finalDef = INITIAL_COMMENT_PATTERN.matcher(finalDef).replaceFirst("").trim(); //handle views that start with '/****** Script for XYZ command from SSMS  ******/'
-        finalDef = CREATE_PROJECTION_AS_PATTERN.matcher(finalDef).replaceFirst("").trim();
-
-        finalDef = finalDef.replaceAll("--.*", "").trim();
-
-        /**handle views that end up as '(select XYZ FROM ABC);' */
-        if (finalDef.startsWith("(") && (finalDef.endsWith(")") || finalDef.endsWith(");"))) {
-            finalDef = finalDef.replaceFirst("^\\(", "");
-            finalDef = finalDef.replaceFirst("\\);?$", "");
-        }
-
-        return finalDef;
-    }
-
-    @Override
-    public String getViewDefinition(CatalogAndSchema schema, final String viewName) throws DatabaseException {
-        schema = schema.customize(this);
-//        String definition = (String) ExecutorService.getInstance().getExecutor(this).queryForObject(new GetViewDefinitionStatement(schema.getCatalogName(), schema.getSchemaName(), viewName), String.class);
-        String definition = (String) ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select view_definition from views  where table_name='" + viewName + "' and table_schema='" + schema.getSchemaName() + "'"), String.class);
-        if (definition == null) {
-            return null;
-        }
-        return definition;
-//        return CREATE_VIEW_AS_PATTERN.matcher(definition).replaceFirst("");
     }
 
     @Override

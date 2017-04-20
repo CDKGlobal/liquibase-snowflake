@@ -1,4 +1,3 @@
-liquibase-vertica
-=================
+# liquibase-snowflake
 
-Liquibase extension to add improved Vertica support
+Liquibase extension to add Snowflake support

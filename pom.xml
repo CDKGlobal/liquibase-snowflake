@@ -68,17 +68,19 @@
         <slf4j.version>1.7.5</slf4j.version>
         <junit.version>4.11</junit.version>
         <postgres.version>9.2-1003-jdbc4</postgres.version>
+        <liquibase.version>3.3.3</liquibase.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>3.3.3</version>
+            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>
-            <version>3.3.3</version>
+            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
