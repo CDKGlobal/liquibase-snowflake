@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:vert="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet id="2" author="vesterma" dbms="oracle" >
+        <createTable tableName="liquitest">
+            <column name="id" type="INT" />
+            <column name="str" type="VARCHAR(24)"/>
+        </createTable>
+    </changeSet>
+   <!-- <changeSet id="3" author="vesterma" dbms="Vertica" >
+        <ext:dropProjection tableName="liquitest" projectionName="liquitest_encoding_proj" cascade="true" />
+    </changeSet>-->
+</databaseChangeLog>

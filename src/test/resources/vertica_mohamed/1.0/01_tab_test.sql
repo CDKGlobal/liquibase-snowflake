@@ -1,0 +1,5 @@
+CREATE TABLE TEST_VERTICA
+(
+id INT 
+) ; 
+
