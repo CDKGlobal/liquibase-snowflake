@@ -54,6 +54,9 @@
                 <version>2.3.2</version>
                 <configuration>
                     <archive>
+                        <manifestEntries>
+                            <Liquibase-Package>liquibase.ext.database</Liquibase-Package>
+                        </manifestEntries>
                         <manifest>
                             <addClasspath>true</addClasspath>
                         </manifest>
@@ -68,7 +71,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <junit.version>4.11</junit.version>
         <postgres.version>9.2-1003-jdbc4</postgres.version>
-        <liquibase.version>3.3.3</liquibase.version>
+        <liquibase.version>3.4.0</liquibase.version>
     </properties>
 
     <dependencies>
@@ -104,5 +107,21 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.7.22</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>net.snowflake</groupId>
+            <artifactId>snowflake-jdbc</artifactId>
+            <version>3.0.16</version>
+            <scope>test</scope>
+        </dependency>
+        -->
     </dependencies>
 </project>
