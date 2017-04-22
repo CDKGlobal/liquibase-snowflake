@@ -1,32 +1,24 @@
-package liquibase.ext.snowflake.database;
+package liquibase.ext.database;
 
 import liquibase.CatalogAndSchema;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
-import liquibase.database.ObjectQuotingStrategy;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.executor.ExecutorService;
-import liquibase.ext.snowflake.statement.GetProjectionDefinitionStatement;
 import liquibase.logging.LogFactory;
-import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.Table;
-import liquibase.util.StringUtils;
 
 import java.math.BigInteger;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
-    public static final String PRODUCT_NAME = "Snowflake Database";
+    public static final String PRODUCT_NAME = "Snowflake";
 
     private Set<String> systemTables = new HashSet<String>();
     private Set<String> systemViews = new HashSet<String>();
@@ -97,8 +89,28 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
     }
 
     @Override
+    public String getDefaultCatalogName() {
+        return super.getDefaultCatalogName().toUpperCase();
+    }
+
+    @Override
+    public String getDefaultSchemaName() {
+        return super.getDefaultSchemaName().toUpperCase();
+    }
+
+    @Override
+    public String getJdbcCatalogName(final CatalogAndSchema schema) {
+        return super.getJdbcCatalogName(schema).toUpperCase();
+    }
+
+    @Override
+    public String getJdbcSchemaName(final CatalogAndSchema schema) {
+        return super.getJdbcSchemaName(schema).toUpperCase();
+    }
+
+    @Override
     public boolean supportsCatalogs() {
-        return false;
+        return true;
     }
 
     @Override
@@ -158,61 +170,6 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
     public boolean generateAutoIncrementBy(BigInteger incrementBy) {
         return true;
     }
-
-    /*
-    @Override
-    public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        if (hasMixedCase(objectName)) {
-            return this.quotingStartCharacter + objectName + this.quotingEndCharacter;
-        } else {
-            return super.escapeObjectName(objectName, objectType);
-        }
-    }
-
-    @Override
-    public String escapeObjectName(String catalogName, String schemaName, String objectName, Class<? extends DatabaseObject> objectType) {
-        if (hasMixedCase(objectName)) {
-            return "\"" + objectName + "\"";
-        } else {
-            return super.escapeObjectName(catalogName, schemaName, objectName, objectType);
-        }
-    }
-
-
-    @Override
-    public String correctObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        if (objectName == null || quotingStrategy != ObjectQuotingStrategy.LEGACY) {
-            return super.correctObjectName(objectName, objectType);
-        }
-        if (objectName.contains("-") || hasMixedCase(objectName) || startsWithNumeric(objectName) || isReservedWord(objectName)) {
-            return objectName;
-        } else {
-            return objectName.toLowerCase();
-        }
-    }
-
-    @Override
-    public CatalogAndSchema correctSchema(final CatalogAndSchema schema) {
-        if (schema == null) {
-            return new CatalogAndSchema(null, getDefaultSchemaName());
-        }
-        String schemaName = StringUtils.trimToNull(schema.getSchemaName());
-
-        if (schemaName == null) {
-            schemaName = getDefaultSchemaName();
-        }
-
-
-        return new CatalogAndSchema(null, schemaName);
-    }
-
-    protected boolean hasMixedCase(String tableName) {
-        if (tableName == null) {
-            return false;
-        }
-        return StringUtils.hasUpperCase(tableName) && StringUtils.hasLowerCase(tableName);
-    }
-    */
 
     @Override
     public boolean supportsRestrictForeignKeys() {

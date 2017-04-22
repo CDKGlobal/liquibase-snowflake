@@ -1,4 +1,4 @@
-package liquibase.ext.snowflake;
+package liquibase.ext;
 
 import java.io.FileInputStream;
 import java.sql.Connection;

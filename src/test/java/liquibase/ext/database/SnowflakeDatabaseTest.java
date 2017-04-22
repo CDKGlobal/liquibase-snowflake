@@ -1,10 +1,15 @@
-package liquibase.ext.snowflake.database;
+package liquibase.ext.database;
 
-import liquibase.ext.snowflake.helpers.SetUtils;
+import liquibase.CatalogAndSchema;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.ext.helpers.SetUtils;
+import liquibase.structure.core.Schema;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -15,6 +20,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SnowflakeDatabaseTest {
 
@@ -32,7 +41,7 @@ public class SnowflakeDatabaseTest {
 
     @Test
     public void testGetDefaultDatabaseProductName() {
-        assertEquals("Snowflake Database", database.getDefaultDatabaseProductName());
+        assertEquals("Snowflake", database.getDefaultDatabaseProductName());
     }
 
     @Test
@@ -85,7 +94,7 @@ public class SnowflakeDatabaseTest {
 
     @Test
     public void testSupportsCatalogs() {
-        assertFalse(database.supportsCatalogs());
+        assertTrue(database.supportsCatalogs());
     }
 
     @Test
@@ -142,7 +151,7 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
-    public void testSupportsRestrictFoeignKeys() {
+    public void testSupportsRestrictForeignKeys() {
         assertTrue(database.supportsRestrictForeignKeys());
     }
 
@@ -150,6 +159,40 @@ public class SnowflakeDatabaseTest {
     public void testIsReservedWord() {
         database.addReservedWords(Arrays.asList("TABLE", "FROM", "INTO"));
         assertTrue(database.isReservedWord("table"));
+    }
+
+    @Test
+    public void catalogNameIsUpperCase() throws Exception {
+        JdbcConnection mock = mock(JdbcConnection.class);
+        database.setConnection(mock);
+        when(mock.getCatalog()).thenReturn("foo");
+
+        assertEquals("FOO", database.getDefaultCatalogName());
+    }
+
+    @Test
+    public void schemaNameIsUpperCase() throws Exception {
+        JdbcConnection jdbcConnection = mock(JdbcConnection.class);
+        ResultSet resultSet = mock(ResultSet.class);
+        Statement statement = mock(Statement.class);
+        when(statement.executeQuery(anyString())).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getString(1)).thenReturn("foo");
+        when(jdbcConnection.createStatement()).thenReturn(statement);
+
+        database.setConnection(jdbcConnection);
+
+        assertEquals("FOO", database.getDefaultSchemaName());
+    }
+
+    @Test
+    public void jdbcCatalogNameIsUpperCase() {
+        assertEquals("CATALOG", database.getJdbcCatalogName(new CatalogAndSchema("catalog", "schema")));
+    }
+
+    @Test
+    public void jdbcSchemaNameIsUpperCase() {
+        assertEquals("SCHEMA", database.getJdbcSchemaName(new CatalogAndSchema("catalog", "schema")));
     }
 
 }
