@@ -4,4 +4,4 @@ target
 *.swp
 *.swo
 .idea
-.iml
+*.iml
