@@ -55,7 +55,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Liquibase-Package>liquibase.ext.database</Liquibase-Package>
+                            <Liquibase-Package>liquibase.ext.database,liquibase.ext.datatype</Liquibase-Package>
                         </manifestEntries>
                         <manifest>
                             <addClasspath>true</addClasspath>
