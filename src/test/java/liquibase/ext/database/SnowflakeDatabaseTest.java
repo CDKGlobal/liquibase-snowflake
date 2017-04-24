@@ -3,7 +3,6 @@ package liquibase.ext.database;
 import liquibase.CatalogAndSchema;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.ext.helpers.SetUtils;
-import liquibase.structure.core.Schema;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,7 +77,12 @@ public class SnowflakeDatabaseTest {
         assertTrue(database.supportsDropTableCascadeConstraints());
     }
 
-    //TODO - test isCorrectDatabaseImplementation
+    @Test
+    public void testIsCorrectDatabaseImplementation() throws Exception {
+        JdbcConnection jdbcConnection = mock(JdbcConnection.class);
+        when(jdbcConnection.getDatabaseProductName()).thenReturn("Snowflake");
+        assertTrue(database.isCorrectDatabaseImplementation(jdbcConnection));
+    }
 
     @Test
     public void testGetDefaultDriver() {
@@ -117,7 +120,6 @@ public class SnowflakeDatabaseTest {
         assertEquals("DATABASECHANGELOGLOCK", database.getDatabaseChangeLogLockTableName());
     }
 
-    //TODO - this seems to just be testing method in abstract class
     @Test
     public void testIsSystemObject() {
         assertFalse(database.isSystemObject(null));
