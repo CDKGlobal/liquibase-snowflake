@@ -22,7 +22,7 @@ the `datetime` Liquibase datatype maps to a Snowflake `timestamp_ntz` column.  T
 The Snowflake JDBC drivers implementation of `DatabaseMetadata.getTables()` hard codes quotes around the catalog, schema and
 table names, resulting in queries of the form:
 
-    show tables like 'DATABASECHANGELOG' in schema "sample_db"."samnple_schema"
+    show tables like 'DATABASECHANGELOG' in schema "sample_db"."sample_schema"
 
 This results in the `DATABASECHANGELOG` table not being found, even after it has been created.  Since Snowflake stores
  catalog and schema names in upper case, the getJdbcCatalogName returns an upper case value. 
