@@ -6,14 +6,14 @@ import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
 import liquibase.ext.database.SnowflakeDatabase;
 
-@DataTypeInfo(name="timestamp", aliases = { "java.sql.Types.DATETIME", "datetime"}, minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
-public class TimestampType extends LiquibaseDataType {
+@DataTypeInfo(name="timestamp_ntz", aliases = { "java.sql.Types.DATETIME", "datetime"}, minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
+public class TimestampNTZType extends LiquibaseDataType {
 
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
 
         if (database instanceof SnowflakeDatabase) {
-            return new DatabaseDataType("TIMESTAMP_LTZ", getParameters());
+            return new DatabaseDataType("TIMESTAMP_NTZ", getParameters());
         }
 
         return super.toDatabaseDataType(database);

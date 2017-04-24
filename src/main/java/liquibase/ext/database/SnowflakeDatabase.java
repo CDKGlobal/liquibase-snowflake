@@ -6,6 +6,7 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.logging.LogFactory;
+import liquibase.logging.Logger;
 import liquibase.structure.DatabaseObject;
 
 import java.math.BigInteger;
@@ -17,14 +18,14 @@ import java.util.Set;
 
 public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
+    private Logger log = new LogFactory().getLog();
     public static final String PRODUCT_NAME = "Snowflake";
-
     private Set<String> systemTables = new HashSet<String>();
     private Set<String> systemViews = new HashSet<String>();
     private Set<String> reservedWords = new HashSet<String>();
 
     public SnowflakeDatabase() {
-        super.setCurrentDateTimeFunction("current_timestamp");
+        super.setCurrentDateTimeFunction("current_timestamp::timestamp_ntz");
         super.unmodifiableDataTypes.addAll(Arrays.asList("integer", "bool", "boolean", "int4", "int8", "float4", "float8", "numeric", "bigserial", "serial", "bytea", "timestamptz"));
         super.unquotedObjectsAreUppercased = false;
     }
@@ -192,29 +193,7 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
             String schema = resultSet.getString(1);
             return schema;
         } catch (Exception e) {
-            LogFactory.getLogger().info("Error getting default schema", e);
-        }
-        return null;
-    }
-
-    public String executeSQL(String query) {
-        DatabaseConnection connection = getConnection();
-        if (connection == null) {
-            return null;
-        }
-        StringBuilder res = null;
-        try {
-            ResultSet resultSet = ((JdbcConnection) connection).createStatement().executeQuery(query);
-            while (resultSet.next()) {
-                if (res == null) {
-                    res = new StringBuilder();
-                }
-                res.append(resultSet.getString(1));
-            }
-            if (res != null)
-                return res.toString();
-        } catch (Exception e) {
-            LogFactory.getLogger().info("Error got exception when running: " + query, e);
+            log.info("Error getting default schema", e);
         }
         return null;
     }

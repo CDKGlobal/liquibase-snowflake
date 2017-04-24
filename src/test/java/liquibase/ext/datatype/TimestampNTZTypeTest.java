@@ -15,22 +15,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TimestampTypeTest {
+public class TimestampNTZTypeTest {
 
-    TimestampType timestampType;
+    TimestampNTZType timestampNTZType;
     SnowflakeDatabase snowflakeDatabase;
 
     @Before
     public void setup() {
-        timestampType = new TimestampType();
+        timestampNTZType = new TimestampNTZType();
         snowflakeDatabase = new SnowflakeDatabase();
     }
 
     @Test
     public void toDatabaseDataType() throws Exception {
-        DatabaseDataType databaseDataType = timestampType.toDatabaseDataType(snowflakeDatabase);
-        assertEquals("TIMESTAMP_LTZ", databaseDataType.getType());
-        assertEquals("TIMESTAMP_LTZ", databaseDataType.toSql());
+        DatabaseDataType databaseDataType = timestampNTZType.toDatabaseDataType(snowflakeDatabase);
+        assertEquals("TIMESTAMP_NTZ", databaseDataType.getType());
+        assertEquals("TIMESTAMP_NTZ", databaseDataType.toSql());
         assertFalse(databaseDataType.isAutoIncrement());
     }
 
@@ -46,28 +46,28 @@ public class TimestampTypeTest {
     @Test
     public void datetimeConvertsToTimestamp() throws Exception {
         LiquibaseDataType liquibaseDataType = DataTypeFactory.getInstance().fromDescription("datetime", snowflakeDatabase);
-        assertEquals("liquibase.ext.datatype.TimestampType", liquibaseDataType.getClass().getName());
+        assertEquals("liquibase.ext.datatype.TimestampNTZType", liquibaseDataType.getClass().getName());
     }
 
     @Test
     public void supports() throws Exception {
-        assertTrue(timestampType.supports(snowflakeDatabase));
-        assertFalse(timestampType.supports(new PostgresDatabase()));
+        assertTrue(timestampNTZType.supports(snowflakeDatabase));
+        assertFalse(timestampNTZType.supports(new PostgresDatabase()));
     }
 
     @Test
     public void getPriority() throws Exception {
-        assertEquals(PRIORITY_DATABASE, timestampType.getPriority());
+        assertEquals(PRIORITY_DATABASE, timestampNTZType.getPriority());
     }
 
     @Test
     public void getMinParameters() throws Exception {
-        assertEquals(0, timestampType.getMinParameters(snowflakeDatabase));
+        assertEquals(0, timestampNTZType.getMinParameters(snowflakeDatabase));
     }
 
     @Test
     public void getMaxParameters() throws Exception {
-        assertEquals(0, timestampType.getMinParameters(snowflakeDatabase));
+        assertEquals(0, timestampNTZType.getMinParameters(snowflakeDatabase));
     }
 
 }
