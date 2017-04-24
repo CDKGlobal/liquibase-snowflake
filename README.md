@@ -1,10 +1,13 @@
 # liquibase-snowflake
 
-Liquibase extension to add Snowflake support
+[Liquibase](http://www.liquibase.org/) extension to add [Snowflake](https://www.snowflake.net/) support
+
+# Snowflake Extension
+
+Initial release supports applying formatted sql changesets.  It might support other types of refactorings but they haven't been tested. 
+Some of the interesting overrides / extensions are documented below.
 
 ## Database
-
-Significant overrides
 
 ### currentDateTimeFunction
 
