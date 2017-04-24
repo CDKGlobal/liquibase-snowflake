@@ -49,7 +49,7 @@ public class SnowflakeDatabaseTest {
 
     @Test
     public void testGetCurrentTimeFunction() {
-        assertEquals("current_timestamp", database.getCurrentDateTimeFunction());
+        assertEquals("current_timestamp::timestamp_ntz", database.getCurrentDateTimeFunction());
     }
 
     @Test
