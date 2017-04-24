@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
@@ -22,11 +21,6 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     private Set<String> systemTables = new HashSet<String>();
     private Set<String> systemViews = new HashSet<String>();
-
-    private static Pattern INITIAL_COMMENT_PATTERN = Pattern.compile("^/\\*.*?\\*/");
-    private static Pattern CREATE_PROJECTION_AS_PATTERN = Pattern.compile("(?im)^\\s*(CREATE|ALTER)\\s+?PROJECTION\\s+?((\\S+?)|(\\[.*\\])|(\\\".*\\\"))\\s+?AS\\s*?", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-    private static Pattern CREATE_VIEW_AS_PATTERN = Pattern.compile("^CREATE\\s+.*?VIEW\\s+.*?AS\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-
     private Set<String> reservedWords = new HashSet<String>();
 
     public SnowflakeDatabase() {
