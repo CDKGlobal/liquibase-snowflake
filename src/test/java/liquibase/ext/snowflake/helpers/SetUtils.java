@@ -1,4 +1,4 @@
-package liquibase.ext.helpers;
+package liquibase.ext.snowflake.helpers;
 
 import java.util.Set;
 

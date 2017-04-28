@@ -1,4 +1,4 @@
-package liquibase.ext.database;
+package liquibase.ext.snowflake.database;
 
 import liquibase.CatalogAndSchema;
 import liquibase.database.AbstractJdbcDatabase;

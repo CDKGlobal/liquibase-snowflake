@@ -1,10 +1,10 @@
-package liquibase.ext.datatype;
+package liquibase.ext.snowflake.datatype;
 
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.ext.database.SnowflakeDatabase;
+import liquibase.ext.snowflake.database.SnowflakeDatabase;
 
 @DataTypeInfo(name="timestamp_ntz", aliases = { "java.sql.Types.DATETIME", "datetime"}, minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
 public class TimestampNTZType extends LiquibaseDataType {

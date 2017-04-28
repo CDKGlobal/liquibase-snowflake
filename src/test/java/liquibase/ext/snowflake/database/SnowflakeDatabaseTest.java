@@ -1,8 +1,8 @@
-package liquibase.ext.database;
+package liquibase.ext.snowflake.database;
 
+import liquibase.ext.snowflake.helpers.SetUtils;
 import liquibase.CatalogAndSchema;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.ext.helpers.SetUtils;
 import org.junit.Before;
 import org.junit.Test;
 

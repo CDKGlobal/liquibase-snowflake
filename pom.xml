@@ -10,7 +10,7 @@
 
     <name>Liquibase Snowflake Database Integration</name>
     <description>Liquibase extension for Snowflake database</description>
-    <url>https://github.com/liquibase/liquibase-snowflakeDatabase</url>
+    <url>http://www.liquibase.org</url>
 
     <licenses>
         <license>
@@ -18,6 +18,10 @@
             <name>Apache License, Version 2.0</name>
         </license>
     </licenses>
+
+    <scm>
+      <url>https://github.com/CDKGlobal/liquibase-snowflake/</url>
+    </scm>
 
     <developers>
         <developer>
@@ -55,7 +59,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Liquibase-Package>liquibase.ext.database,liquibase.ext.datatype</Liquibase-Package>
+                            <Liquibase-Package>liquibase.ext.snowflake.database,liquibase.ext.snowflake.datatype</Liquibase-Package>
                         </manifestEntries>
                         <manifest>
                             <addClasspath>true</addClasspath>

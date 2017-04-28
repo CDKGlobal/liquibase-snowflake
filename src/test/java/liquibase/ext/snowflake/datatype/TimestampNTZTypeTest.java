@@ -1,10 +1,10 @@
-package liquibase.ext.datatype;
+package liquibase.ext.snowflake.datatype;
 
 import liquibase.database.core.PostgresDatabase;
 import liquibase.datatype.DataTypeFactory;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.ext.database.SnowflakeDatabase;
+import liquibase.ext.snowflake.database.SnowflakeDatabase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class TimestampNTZTypeTest {
     @Test
     public void datetimeConvertsToTimestamp() throws Exception {
         LiquibaseDataType liquibaseDataType = DataTypeFactory.getInstance().fromDescription("datetime", snowflakeDatabase);
-        assertEquals("liquibase.ext.datatype.TimestampNTZType", liquibaseDataType.getClass().getName());
+        assertEquals("liquibase.ext.snowflake.datatype.TimestampNTZType", liquibaseDataType.getClass().getName());
     }
 
     @Test
