@@ -164,7 +164,7 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
-    public void catalogNameIsUpperCase() throws Exception {
+    public void defaultCatalogNameIsUpperCase() throws Exception {
         JdbcConnection mock = mock(JdbcConnection.class);
         database.setConnection(mock);
         when(mock.getCatalog()).thenReturn("foo");
@@ -173,7 +173,12 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
-    public void schemaNameIsUpperCase() throws Exception {
+    public void defaultCatalogNameIsNullWhenConnectionIsNull() throws Exception {
+        assertNull(database.getDefaultCatalogName());
+    }
+
+    @Test
+    public void defaultSchemaNameIsUpperCase() throws Exception {
         JdbcConnection jdbcConnection = mock(JdbcConnection.class);
         ResultSet resultSet = mock(ResultSet.class);
         Statement statement = mock(Statement.class);
@@ -188,13 +193,28 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
+    public void defaultSchemaNameIsNullWhenConnectionIsNull() throws Exception {
+        assertNull(database.getDefaultSchemaName());
+    }
+
+    @Test
     public void jdbcCatalogNameIsUpperCase() {
         assertEquals("CATALOG", database.getJdbcCatalogName(new CatalogAndSchema("catalog", "schema")));
     }
 
     @Test
+    public void jdbcCatalogNameIsNullWhenCatalogAndSchemaAreNull() {
+        assertNull(database.getJdbcCatalogName(new CatalogAndSchema(null, null)));
+    }
+
+    @Test
     public void jdbcSchemaNameIsUpperCase() {
         assertEquals("SCHEMA", database.getJdbcSchemaName(new CatalogAndSchema("catalog", "schema")));
+    }
+
+    @Test
+    public void jdbcSchemaNameIsNullWhenCatalogAndSchemaAreNull() {
+        assertNull(database.getJdbcSchemaName(new CatalogAndSchema(null, null)));
     }
 
 }

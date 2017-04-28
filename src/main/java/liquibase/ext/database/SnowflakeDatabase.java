@@ -85,22 +85,22 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
     @Override
     public String getDefaultCatalogName() {
-        return super.getDefaultCatalogName().toUpperCase();
+        return super.getDefaultCatalogName() == null ? null : super.getDefaultCatalogName().toUpperCase();
     }
 
     @Override
     public String getDefaultSchemaName() {
-        return super.getDefaultSchemaName().toUpperCase();
+        return super.getDefaultSchemaName() == null ? null : super.getDefaultSchemaName().toUpperCase();
     }
 
     @Override
     public String getJdbcCatalogName(final CatalogAndSchema schema) {
-        return super.getJdbcCatalogName(schema).toUpperCase();
+        return super.getJdbcCatalogName(schema) == null ? null : super.getJdbcCatalogName(schema).toUpperCase();
     }
 
     @Override
     public String getJdbcSchemaName(final CatalogAndSchema schema) {
-        return super.getJdbcSchemaName(schema).toUpperCase();
+        return super.getJdbcSchemaName(schema) == null ? null : super.getJdbcSchemaName(schema).toUpperCase();
     }
 
     @Override
