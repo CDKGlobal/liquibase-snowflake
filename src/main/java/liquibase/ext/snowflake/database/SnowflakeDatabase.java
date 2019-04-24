@@ -5,24 +5,24 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.logging.LogFactory;
+import liquibase.logging.LogService;
 import liquibase.logging.Logger;
 import liquibase.structure.DatabaseObject;
 
 import java.math.BigInteger;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 public class SnowflakeDatabase extends AbstractJdbcDatabase {
 
-    private Logger log = new LogFactory().getLog();
-    public static final String PRODUCT_NAME = "Snowflake";
-    private Set<String> systemTables = new HashSet<String>();
-    private Set<String> systemViews = new HashSet<String>();
-    private Set<String> reservedWords = new HashSet<String>();
+    private static final String PRODUCT_NAME = "Snowflake";
+
+    private Logger log = LogService.getLog(getClass());
+    private Set<String> systemTables = new HashSet<>();
+    private Set<String> systemViews = new HashSet<>();
 
     public SnowflakeDatabase() {
         super.setCurrentDateTimeFunction("current_timestamp::timestamp_ntz");
@@ -172,23 +172,13 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
     }
 
     @Override
-    public void addReservedWords(Collection<String> words) {
-        reservedWords.addAll(words);
-    }
-
-    @Override
-    public boolean isReservedWord(String tableName) {
-        return reservedWords.contains(tableName.toUpperCase());
-    }
-
-    @Override
     protected String getConnectionSchemaName() {
         DatabaseConnection connection = getConnection();
         if (connection == null) {
             return null;
         }
-        try {
-            ResultSet resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT CURRENT_SCHEMA()");
+        try (Statement statement = ((JdbcConnection) connection).createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT CURRENT_SCHEMA()")) {
             resultSet.next();
             String schema = resultSet.getString(1);
             return schema;
