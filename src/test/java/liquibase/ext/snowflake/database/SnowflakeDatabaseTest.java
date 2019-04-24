@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 public class SnowflakeDatabaseTest {
 
-    SnowflakeDatabase database;
+    private SnowflakeDatabase database;
 
     @Before
     public void setup() {
@@ -173,7 +173,7 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
-    public void defaultCatalogNameIsNullWhenConnectionIsNull() throws Exception {
+    public void defaultCatalogNameIsNullWhenConnectionIsNull() {
         assertNull(database.getDefaultCatalogName());
     }
 
@@ -193,7 +193,7 @@ public class SnowflakeDatabaseTest {
     }
 
     @Test
-    public void defaultSchemaNameIsNullWhenConnectionIsNull() throws Exception {
+    public void defaultSchemaNameIsNullWhenConnectionIsNull() {
         assertNull(database.getDefaultSchemaName());
     }
 
