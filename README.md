@@ -1,11 +1,10 @@
 # liquibase-snowflake
+![Java CI](https://github.com/bruce-szalwinski/liquibase-snowflake/workflows/Java%20CI/badge.svg)
 
 [Liquibase](http://www.liquibase.org/) extension to add [Snowflake](https://www.snowflake.net/) support
 
 # Snowflake Extension
-
-Initial release supports applying formatted sql changesets.  It might support other types of refactorings but they haven't been tested. 
-Some of the interesting overrides / extensions are documented below.
+Initial release supports applying formatted sql changesets.  It might support other types of refactorings but they haven't been tested.  Some of the interesting overrides / extensions are documented below.
 
 ## Database
 
@@ -25,7 +24,7 @@ table names, resulting in queries of the form:
     show tables like 'DATABASECHANGELOG' in schema "sample_db"."sample_schema"
 
 This results in the `DATABASECHANGELOG` table not being found, even after it has been created.  Since Snowflake stores
- catalog and schema names in upper case, the getJdbcCatalogName returns an upper case value. 
+ catalog and schema names in upper case, the getJdbcCatalogName returns an upper case value.
 
 ### getJdbcSchemaName
 
@@ -37,3 +36,8 @@ See [getJdbcCatalogName](#getJdbcCatalogName)
 
 The `datetime` datatype in Snowflake is an alias for the datatype `timestamp_ntz`, [Date and Time Data Types](https://docs.snowflake.net/manuals/sql-reference/data-types.html#date-and-time-data-types).
 The `TimestampNTZType` class clarifies this mapping from Liquibase `datetime` to Snowflake `timestamp_ntz`.
+
+
+## ChangeLog
+
+2020-02-02 : upgrade to liquibase 3.8.5

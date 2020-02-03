@@ -1,5 +1,6 @@
 package liquibase.ext.snowflake.datatype;
 
+import liquibase.change.core.LoadDataChange;
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
@@ -25,6 +26,11 @@ public class TimestampNTZType extends LiquibaseDataType {
     }
 
     @Override
+    public LoadDataChange.LOAD_DATA_TYPE getLoadTypeName() {
+        return LoadDataChange.LOAD_DATA_TYPE.DATE;
+    }
+
+    @Override
     public boolean supports(Database database) {
         if (database instanceof SnowflakeDatabase)
             return true;
@@ -35,4 +41,6 @@ public class TimestampNTZType extends LiquibaseDataType {
     public int getPriority() {
         return PRIORITY_DATABASE;
     }
+
+
 }

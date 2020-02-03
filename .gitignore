@@ -5,3 +5,9 @@ target
 *.swo
 .idea
 *.iml
+
+.classpath
+.history/
+.settings/
+.vscode/
+.project

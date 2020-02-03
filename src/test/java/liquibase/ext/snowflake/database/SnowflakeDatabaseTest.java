@@ -159,7 +159,7 @@ public class SnowflakeDatabaseTest {
 
     @Test
     public void testIsReservedWord() {
-        database.addReservedWords(Arrays.asList("TABLE", "FROM", "INTO"));
+//        database.addReservedWords(Arrays.asList("TABLE", "FROM", "INTO"));
         assertTrue(database.isReservedWord("table"));
     }
 
