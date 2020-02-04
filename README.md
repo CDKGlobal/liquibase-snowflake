@@ -1,7 +1,7 @@
 # liquibase-snowflake
 ![Java CI](https://github.com/bruce-szalwinski/liquibase-snowflake/workflows/Java%20CI/badge.svg)
 
-[Liquibase](http://www.liquibase.org/) extension to add [Snowflake](https://www.snowflake.net/) support
+[Liquibase](http://www.liquibase.org/) extension to add [Snowflake](https://www.snowflake.net/) support.  This repo should be considered the canonical version of the Snowflake extension and represents the latest and greatest version.
 
 # Snowflake Extension
 Initial release supports applying formatted sql changesets.  It might support other types of refactorings but they haven't been tested.  Some of the interesting overrides / extensions are documented below.
