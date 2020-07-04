@@ -1,4 +1,7 @@
 # liquibase-snowflake
+
+This extension is now managed at [liquibase-snowflake](https://github.com/liquibase/liquibase-snowflake).
+
 ![Java CI](https://github.com/bruce-szalwinski/liquibase-snowflake/workflows/Java%20CI/badge.svg)
 
 [Liquibase](http://www.liquibase.org/) extension to add [Snowflake](https://www.snowflake.net/) support.  This repo should be considered the canonical version of the Snowflake extension and represents the latest and greatest version.
